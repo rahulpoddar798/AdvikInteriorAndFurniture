@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export function ContactSection() {
   const [formData, setFormData] = useState({
@@ -14,12 +15,23 @@ export function ContactSection() {
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission (could integrate with email service)
-    console.log('Form submitted:', formData);
-    alert('Thank you for contacting Advik Furniture! We will get back to you soon.');
-    setFormData({ name: '', email: '', phone: '', message: '' });
+    try {
+      const response = await fetch("http://localhost:5000/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        toast.success("Message sent successfully!");
+        setFormData({ name: '', email: '', phone: '', message: '' });
+      } else {
+        toast.error("Failed to send message.");
+      }
+    } catch (error) {
+      toast.error("Something went wrong.");
+    }
   };
 
   const contactInfo = [
@@ -33,13 +45,13 @@ export function ContactSection() {
       icon: Mail,
       title: 'Email',
       details: ['info@advik.com'],
-      link: 'mailto:info@advik.com',
+      link: 'woodathome108@gail.com',
     },
     {
       icon: MapPin,
       title: 'Address',
       details: ['663A, Thandal Kazhani, G.N.T Road', 'Puzhal Redhhills, Chennai - 66'],
-      link: '#',
+      link: 'https://www.google.com/maps/search/?api=1&query=663A%20Thandal%20Kazhani%2C%20G.N.T%20Road%2C%20Puzhal%20Redhills%2C%20Chennai',
     },
     {
       icon: Clock,
@@ -61,14 +73,14 @@ export function ContactSection() {
         >
           <h2 className="mb-4">Get in Touch</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Have questions about our furniture? Want to place a custom order? 
+            Have questions about our furniture? Want to place a custom order?
             We're here to help bring your vision to life.
           </p>
         </motion.div>
 
-        <div>
+        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Information */}
-          <div className="space-y-6 max-w-5xl mx-auto">
+          <div className="space-y-6">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -104,6 +116,70 @@ export function ContactSection() {
               </div>
             </motion.div>
           </div>
+
+          {/* Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Send us a Message</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label htmlFor="name" className="text-sm font-medium">Name</label>
+                      <Input
+                        id="name"
+                        placeholder="Your Name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="phone" className="text-sm font-medium">Phone</label>
+                      <Input
+                        id="phone"
+                        placeholder="Your Phone"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium">Email</label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="your@email.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="message" className="text-sm font-medium">Message</label>
+                    <Textarea
+                      id="message"
+                      placeholder="Tell us about your requirements..."
+                      className="min-h-[150px]"
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    <Send className="w-4 h-4 mr-2" />
+                    Send Message
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </div>
     </section>

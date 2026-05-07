@@ -97,7 +97,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="grid grid-cols-3 gap-8 mt-12 pt-12 border-t border-border"
+              className="flex items-center gap-8 mt-12 pt-12 border-t border-border"
             >
               <div>
                 <div className="text-primary mb-1">80+</div>
@@ -108,7 +108,7 @@ export function Hero() {
                 <p className="text-sm text-muted-foreground">Happy Customers</p>
               </div>
               <div>
-                <div className="text-primary mb-1">5+</div>
+                <div className="text-primary mb-1">25+</div>
                 <p className="text-sm text-muted-foreground">Years Experience</p>
               </div>
             </motion.div>

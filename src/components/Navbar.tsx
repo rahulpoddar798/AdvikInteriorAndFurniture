@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, Phone, Mail } from 'lucide-react';
 import { Button } from './ui/button';
 import { Logo } from './Logo';
+import { AuthModal } from './AuthModal';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -34,9 +35,8 @@ export function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-background/95 backdrop-blur-md shadow-md' : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-background/95 backdrop-blur-md shadow-md' : 'bg-transparent'
+        }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
@@ -69,6 +69,7 @@ export function Navbar() {
               <Phone className="w-4 h-4" />
               <span>+91 94719 83191</span>
             </a>
+            <AuthModal />
           </div>
 
           {/* Mobile Menu Button */}
@@ -102,6 +103,9 @@ export function Navbar() {
                   <Mail className="w-4 h-4" />
                   <span>info@advik.com</span>
                 </a>
+              </div>
+              <div className="pt-2">
+                <AuthModal />
               </div>
             </div>
           </div>

@@ -3,7 +3,7 @@ import { ShoppingCart, Heart, Eye, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,21 +17,53 @@ interface Product {
   image: string;
   description: string;
   itemCode: string;
+  title: string; // Added title to Product interface based on mapping
 }
 
 interface ProductSectionProps {
   id: string;
   title: string;
   subtitle: string;
-  products: Product[];
+
 }
 
-export function ProductSection({
-  id,
-  title,
-  subtitle,
-  products,
-}: ProductSectionProps) {
+export function ProductSection({ id, title, subtitle }: ProductSectionProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.message === "success") {
+          // Transform backend data to match frontend interface if needed
+          // For now assuming backend returns matching structure or we map it
+          const mappedProducts = data.data.map((p: any) => ({
+            id: p.id,
+            image: p.image,
+            description: p.description,
+            itemCode: `ITEM-${p.id}`, // Generate item code if missing
+            title: p.name,
+            category: p.category // Ensure category is included
+          }));
+
+          // Filter products based on the section ID
+          const categoryMap: { [key: string]: string } = {
+            'beds': 'Bedroom',
+            'sofas': 'Sofas',
+            'chairs': 'Chairs',
+            'dining-tables': 'Dining'
+          };
+
+          const targetCategory = categoryMap[id];
+          const filteredProducts = targetCategory
+            ? mappedProducts.filter((p: any) => p.category === targetCategory)
+            : mappedProducts;
+
+          setProducts(filteredProducts);
+        }
+      })
+      .catch((err) => console.error("Error fetching products:", err));
+  }, [id]); // Added 'id' to dependency array to re-fetch/filter when section changes
   const [hoveredProduct, setHoveredProduct] = useState<
     number | null
   >(null);
